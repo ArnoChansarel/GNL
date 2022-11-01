@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: achansar <achansar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 13:26:59 by achansar          #+#    #+#             */
-/*   Updated: 2022/11/01 19:16:59 by achansar         ###   ########.fr       */
+/*   Updated: 2022/11/01 19:10:07 by achansar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 void	*ft_memset(void *b, int c, size_t len)
 {
@@ -86,52 +86,46 @@ char	*ft_readline(int fd, char *save)
 
 char	*get_next_line(int fd)
 {
-	static char	*save;
+	static char	*save[OPEN_MAX];
 	char		*line;
 
 	if (fd < 0 || fd >= OPEN_MAX || BUFFER_SIZE <= 0)
 		return (NULL);
-	save = ft_readline(fd, save);
-	line = ft_strdup_nl(save);
-	save = ft_split_gnl(save);
-	if (!save || !line)
-		return (ft_free_all(line, save));
+	save[fd] = ft_readline(fd, save[fd]);
+	line = ft_strdup_nl(save[fd]);
+	save[fd] = ft_split_gnl(save[fd]);
+	if (!save[fd] || !line)
+		return (ft_free_all(line, save[fd]));
 	return (line);
 }
 /*
-int main(void)
+int	main(void)
 {
-	char *ret;
-
-	int fd = open("textfile.txt", O_RDONLY);
-	if (fd == -1)
+	char	*line;
+	int		i;
+	int		fd1;
+	int		fd2;
+	int		fd3;
+	fd1 = open("textfile.txt", O_RDONLY);
+	fd2 = open("textfile2.txt", O_RDONLY);
+	fd3 = open("textfile3.txt", O_RDONLY);
+	i = 1;
+	while (i < 7)
 	{
-		return (1);
+		line = get_next_line(fd1);
+		printf("line [%02d]: %s", i, line);
+		free(line);
+		line = get_next_line(fd2);
+		printf("line [%02d]: %s", i, line);
+		free(line);
+		line = get_next_line(fd3);
+		printf("line [%02d]: %s", i, line);
+		free(line);
+		i++;
 	}
-	ret = get_next_line(fd);
-	printf(" END = %s", ret);
-	free(ret);
-	ret = get_next_line(fd);
-	printf(" END = %s", ret);
-	free(ret);
-	ret = get_next_line(fd);
-	printf(" END = %s", ret);
-	free(ret);
-	ret = get_next_line(fd);
-	printf(" END = %s", ret);
-	free(ret);
-	ret = get_next_line(fd);
-	printf(" END = %s", ret);
-	free(ret);
-	ret = get_next_line(fd);
-	printf(" END = %s", ret);
-	free(ret);
-	
-	if (close(fd) == -1)
-	{
-		return (1);
-	}
-	printf("main ret = %s\n", ret);
-	system("leaks a.out");
+	close(fd1);
+	close(fd2);
+	close(fd3);
 	return (0);
-}*/
+}
+*/
