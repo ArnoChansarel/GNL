@@ -6,7 +6,7 @@
 /*   By: achansar <achansar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 13:26:59 by achansar          #+#    #+#             */
-/*   Updated: 2022/11/01 19:16:59 by achansar         ###   ########.fr       */
+/*   Updated: 2022/11/02 15:40:29 by achansar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ char	*ft_split_gnl(char *full)
 	if (!full)
 		return (NULL);
 	i = 0;
-	left = NULL;
 	while (full[i])
 	{
 		if (full[i++] == '\n')
@@ -46,12 +45,12 @@ char	*ft_split_gnl(char *full)
 	}
 	left = malloc(sizeof(char) * (ft_strlen(full + i) + 1));
 	if (!left)
-		return (ft_free_all(full, 0));
+		return (ft_free_all(0, &full));
 	j = 0;
 	while (full[i])
 		left[j++] = full[i++];
 	left[j] = '\0';
-	free (full);
+	ft_free_all(0, &full);
 	return (left);
 }
 
@@ -76,7 +75,7 @@ char	*ft_readline(int fd, char *save)
 	{
 		byte_read = read(fd, buff, BUFFER_SIZE);
 		if (byte_read == -1)
-			return (ft_free_all(buff, save));
+			return (ft_free_all(buff, &save));
 		buff[byte_read] = '\0';
 		save = ft_strjoin(save, buff);
 	}
@@ -92,10 +91,14 @@ char	*get_next_line(int fd)
 	if (fd < 0 || fd >= OPEN_MAX || BUFFER_SIZE <= 0)
 		return (NULL);
 	save = ft_readline(fd, save);
+	if (!save)
+		return (NULL);
 	line = ft_strdup_nl(save);
+	if (!line)
+		return (NULL);
 	save = ft_split_gnl(save);
 	if (!save || !line)
-		return (ft_free_all(line, save));
+		return (ft_free_all(line, &save));
 	return (line);
 }
 /*
